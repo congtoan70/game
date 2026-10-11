@@ -1,13 +1,45 @@
-<!doctype html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Brick Breaker</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <canvas id="game" width="720" height="560"></canvas>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Game</title>
+        <link rel="stylesheet" href="./style.css">
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <h1>Welcome to My Game</h1>
+        <main class="page">
+<h1>PingPong</h1>
+<div class="toolbar">
+<label for="select-level"> Chọn level</label>
+<select name="" id="select-level" aria-label="Chọn level"></select>
+<button aria-label="re/start-game">Bắt đầu</button>
+</div>
+<p > di chuyen chuot, cham hoac keo tren san hoac dung phim mui ten trai phai.nhan space de tha bong</p>
+<div id="game-board">
+<div id="game">
+<div id="hub"></div>
+<span id="live">Mang</span>
 
-  <script src="game.js"></script>
-</body>
+<span id="score">Diem</span>
+
+<span id="ball-count">Bong</span>
+<span id="level-inf"></span>
+</div>
+<div id="brick"></div>
+
+<div id="blocker"></div>
+
+<div id="item"></div>
+
+<div id="paddle"></div>
+<div id="ball"></div>
+<div id="message" role="status">
+
+</div>
+</div>
+</div>
+        </main>
+    </body> 
 </html>

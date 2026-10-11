@@ -1,0 +1,72 @@
+body{
+    margin:8px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1{
+    margin:8px 0;
+    font-size: 20px;
+}
+p{
+    margin:6px 0;
+    font-size: 14px;
+}
+
+
+#game-board{
+    margin:auto;
+    overflow:hidden;
+}
+
+#game {
+    position: relative;
+    width: 760px;
+    height: 680px;
+    background:black;
+    color:white;
+    overflow:hidden;
+    touch-action: none;
+}
+
+.brick, .ball, #paddle, #blocker ,#hud,#message{
+    position: absolute;
+}
+#hud{
+    top:12px;
+    left:12px;
+    right:12px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.brick{
+    text-align:center;
+    line-height: 36px;
+}
+#paddle #blocker{
+    height: 14px;
+    background: white;
+ }
+
+ #blocker{
+    display:none;
+ }
+ .ball {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+ }
+ .item{
+    width: 28px;
+    height: 28px;
+    text-align:center;
+    line-height: 28px;
+ }
+ #message{
+  top: 45%;
+  width: 100%;
+  background: #222;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+ } 
