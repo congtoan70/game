@@ -1,71 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game pingpong</title>
-    <style>
-#game {
-    position: relative;
-    width: 760px;
-    height: 680px;
-    background:black;
-    color:white;
-    overflow: hidden;
-    touch-action: none;
-}
-#paddle, #blocker {
-    height: 14px;
-    background: white;
-}
-#message {
-    white-space: pre-line;
-}
-.brick, .item, .ball, #paddle, #blocker {
-    position: absolute;}
-
-    .brick {
-            background: gray;
-            text-align: center;
-            line-height: 36px;
-    }
-    .item {
-        width: 28px;
-        height: 28px;
-        background: gray;
-        text-align: center;
-    }
-    .ball{ width: 18px;height: 18px;border-radius: 50%;background:white;}
-
-    </style>
-</head>
-<body>
-<main>
-    <div>
-<label for="level-select">chọn cấp độ:</label>
-<select id="level-select"></select>
-<button id="restart-button">Choi lai</button>
-    </div>
-    <p id="hud">
-<span id="lives"></span>
-<span id="score"></span>
-<span id="ball-count"></span>
-<span id="level-info"></span>
-
-    </p>
-    <div id="game" tabindex="0" aria-label="San pingpong">
-<div id="bricks"></div>
-<div id="blocker"></div>
-<div id="items"></div>
-<div id="paddle"></div>
-<div id="balls"></div>
-
-
-
-    </div>
-    <p id="message" role="status"></p>
-</main>
-<script>
 const gameEl=document.getElementById("game");
 const paddleEl=document.getElementById("paddle");
 const ballsEl=document.getElementById("balls");
@@ -92,7 +24,10 @@ const BRICK_H=36;
 const BRICK_GAP=8;
 const BRICK_TOP=82;
 const BRICK_LEFT=104;
-const LEVELS=[{name:"1. Co ban",kind:"basic"}];
+const LEVELS=[{name:"1. Co ban",kind:"basic"},
+    {name:"2. Gach dem nguoc",kind:"durable"},
+
+];
 const LABELS= {wide:"<->",triple:"3",life:"+"}
 const ROWS=["1111111","1111111","1111111","1111111"]
 const DROPS=[
@@ -109,7 +44,7 @@ let score=0;
 let gameTime=0;
 let wideUntil=0;
 let balls=[];
- let items=[];
+let items=[];
 let paddle={
     x:320,w:120
 };
@@ -122,9 +57,9 @@ const keys={left:false,right:false};
 
 
 function clamp(value,min,max){
-if(value<min) return min;
-if(value>max) return max;
-return value;
+    if( value<min) return min;
+    if(value>max) return max;
+    return value;
 }
 function message(text){
     messageEl.textContent=text;
@@ -155,9 +90,9 @@ function render(){
 
     for(const ball of balls){
 
-    ball.el.style.left=`${ball.x-R}px`;
-    ball.el.style.top=`${ball.y-R}px`;
-    ball.el.style.background ="#fff"
+        ball.el.style.left=`${ball.x-R}px`;
+        ball.el.style.top=`${ball.y-R}px`;
+        ball.el.style.background ="#fff"
 
     }
     for(const item of items){
@@ -282,39 +217,39 @@ function frame(now){
     }
     if(state==="playing"){
         gameTime +=dt;
-if(wideUntil >0 && gameTime >= wideUntil){
-    wideUntil =0;
-    paddle.w=120;
-    paddle.x=clamp(paddle.x,0,W - paddle.w);
-}
-updateItems(dt);
-for(const ball of balls) updateBall(ball,dt);
-for(let  i = balls.length -1; i>= 0; i--){
-    if(balls[i].y -R >H){
-        balls[i].el.remove();
-        balls.splice(i,1);
-    }
-}
-if(bricks.length===0){
-    state="won";
-    message(" ban da chien thang voi diem "+ score);
-} else if(balls.length===0) {
-    lives-=1;
-    wideUntil=0;
-    paddle.w=120;
-    paddle.x= clamp(paddle.x,0,W - paddle.w);
-    if(lives <= 0){
-        state="lost";
-        message("het mang.Diem" +score);
-    } else resetBall();
-    
-}
+        if(wideUntil >0 && gameTime >= wideUntil){
+            wideUntil =0;
+            paddle.w=120;
+            paddle.x=clamp(paddle.x,0,W - paddle.w);
+        }
+        updateItems(dt);
+        for(const ball of balls) updateBall(ball,dt);
+        for(let  i = balls.length -1; i>= 0; i--){
+            if(balls[i].y -R >H){
+                balls[i].el.remove();
+                balls.splice(i,1);
+            }
+        }
+        if(bricks.length===0){
+            state="won";
+            message(" ban da chien thang voi diem "+ score);
+        } else if(balls.length===0) {
+            lives-=1;
+            wideUntil=0;
+            paddle.w=120;
+            paddle.x= clamp(paddle.x,0,W - paddle.w);
+            if(lives <= 0){
+                state="lost";
+                message("het mang.Diem" +score);
+            } else resetBall();
+
+        }
     }
     render();
     requestAnimationFrame(frame);
 }
 
-    
+
 
 function makeBricks(){
     bricksEl.replaceChildren();
@@ -322,6 +257,8 @@ function makeBricks(){
     for (let row=0; row < ROWS.length;row++){
         for(let col=0;col< ROWS[row].length;col++){
             if (ROWS[row][col] === ".") continue;
+            let hp=1;
+            if(level.kind==="durable") hp=2;
             let drop = null;
             for(const item of DROPS){
                 if(item.row=== row && item.col === col) drop = item.type;
@@ -331,10 +268,10 @@ function makeBricks(){
             const brick={
                 x:BRICK_LEFT+col*(BRICK_W+BRICK_GAP),
                 y:BRICK_TOP+row*(BRICK_H+BRICK_GAP),
-                w:BRICK_W,h:BRICK_H, el, drop
+                w:BRICK_W,h:BRICK_H, el,hp, drop
             };
             el.style.left=`${brick.x}px`
-            
+
             el.style.top=`${brick.y}px`
             el.style.width=`${brick.w}px`
             el.style.height=`${brick.h}px`
@@ -347,6 +284,11 @@ function makeBricks(){
 
 
 function damageBrick(brick){
+    brick.hp-=1;
+    if (brick.hp>0){
+        paintBrick(brick);
+        return;
+    }
     brick.el.remove();
     bricks.splice(bricks.indexOf(brick),1);
     spawnItem(brick);
@@ -377,7 +319,7 @@ function applyItem(type){
         lives +=1;
     }
 }
- 
+
 function updateItems(dt){
     for (let i = items.length -1;i>= 0;i--){
         const item = items[i];
@@ -422,7 +364,7 @@ function startLevel(index){
     level=LEVELS[index];
     lives=3;
     score=0;
-    
+
     speed=300;
     gameTime=0;
     wideUntil=0;
@@ -433,30 +375,31 @@ function startLevel(index){
     resetBall();
     render();
 }
- function spawnItem(brick){
-if(!brick.drop) return;
-const el = document.createElement("div");
-el.className="item";
-el.textContent=LABELS[brick.drop];
-itemsEl.append(el);
-items.push({
-    x:brick.x+ brick.w/2-ITEM_SIZE/2,
-    y: brick.y+ brick.h/2, type: brick.drop, el
-});
- }
+function spawnItem(brick){
+    if(!brick.drop) return;
+    const el = document.createElement("div");
+    el.className="item";
+    el.textContent=LABELS[brick.drop];
+    itemsEl.append(el);
+    items.push({
+        x:brick.x+ brick.w/2-ITEM_SIZE/2,
+        y: brick.y+ brick.h/2, type: brick.drop, el
+    });
+}
 
 function updateHud(){
-livesEl.textContent=`mang:${lives}`;
+    livesEl.textContent=`mang:${lives}`;
 
-scoreEl.textContent=`diem:${score}`;
-ballCountEl.textContent=`bong:${balls.length}`;
-levelInfoEl.textContent="";
+    scoreEl.textContent=`diem:${score}`;
+    ballCountEl.textContent=`bong:${balls.length}`;
+    levelInfoEl.textContent="";
 
-if(wideUntil > gameTime) levelInfoEl.textContent=" Thanh rong";
+    if(wideUntil > gameTime) levelInfoEl.textContent=" Thanh rong";
 }
 
 function paintBrick(brick){
     let text ="";
+    if(level.kind=== "durable") text =String(brick.hp);
     if(brick.drop) text +=" " + LABELS[brick.drop];
     brick.el.textContent=text.trim();
 
@@ -467,4 +410,3 @@ function paintBrick(brick){
 
 startLevel(0);
 requestAnimationFrame(frame);
-</script>

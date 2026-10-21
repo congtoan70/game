@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game pingpong</title>
+    <style>
+#game {
+    position: relative;
+    width: 760px;
+    height: 680px;
+    background:black;
+    color:white;
+    overflow: hidden;
+    touch-action: none;
+}
+#paddle, #blocker {
+    height: 14px;
+    background: white;
+}
+#message {
+    white-space: pre-line;
+}
+.brick, .item, .ball, #paddle, #blocker {
+    position: absolute;}
+
+    .brick {
+            background: gray;
+            text-align: center;
+            line-height: 36px;
+    }
+    .item {
+        width: 28px;
+        height: 28px;
+        background: gray;
+        text-align: center;
+    }
+    .ball{ width: 18px;height: 18px;border-radius: 50%;background:white;}
+
+    </style>
+</head>
+<body>
+<main>
+    <div>
+<label for="level-select">chọn cấp độ:</label>
+<select id="level-select"></select>
+<button id="restart-button">Choi lai</button>
+    </div>
+    <p id="hud">
+<span id="lives"></span>
+<span id="score"></span>
+<span id="ball-count"></span>
+<span id="level-info"></span>
+
+    </p>
+    <div id="game" tabindex="0" aria-label="San pingpong">
+<div id="bricks"></div>
+<div id="blocker"></div>
+<div id="items"></div>
+<div id="paddle"></div>
+<div id="balls"></div>
+
+
+
+    </div>
+    <p id="message" role="status"></p>
+</main>
+<script src="./game.js">
+
+</script>
