@@ -27,7 +27,8 @@ const BRICK_TOP=82;
 const BRICK_LEFT=104;
 const LEVELS=[{name:"1. Co ban",kind:"basic"},
     {name:"2. Gach dem nguoc",kind:"durable"},
-{name:"3. Thanh chan di chuyen",kind:"blocker"}
+{name:"3. Thanh chan di chuyen",kind:"blocker"},
+    {name:"4. Bong tang toc", kind:"speed"},
 ];
 const LABELS= {wide:"<->",triple:"3",life:"+"}
 const ROWS=["1111111","1111111","1111111","1111111"]
@@ -301,6 +302,16 @@ function damageBrick(brick){
     bricks.splice(bricks.indexOf(brick),1);
     spawnItem(brick);
     score+=10;
+    if (lvel.kind ==="speed"){
+        const oldSpeed = speed;
+        speed+=5;
+        const ratio= speed/oldSpeed;
+        for (const ball of balls){
+
+            ball.vx*= ratio;
+            ball.vy*= ratio;
+        }
+    }
 }
 
 function applyItem(type){
@@ -406,6 +417,7 @@ function updateHud(){
     levelInfoEl.textContent="";
 
     if(wideUntil > gameTime) levelInfoEl.textContent=" Thanh rong";
+    if (level.kind === "speed") levelInfoEl.textContent=`Toc do: ${speed}`;
 }
 function updateBlocker(dt){
 if(level.kind !== "blocker") return;
