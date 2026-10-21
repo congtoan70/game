@@ -302,7 +302,7 @@ function damageBrick(brick){
     bricks.splice(bricks.indexOf(brick),1);
     spawnItem(brick);
     score+=10;
-    if (lvel.kind ==="speed"){
+    if (level.kind ==="speed"){
         const oldSpeed = speed;
         speed+=5;
         const ratio= speed/oldSpeed;
