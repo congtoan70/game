@@ -13,6 +13,7 @@ const itemsEl = document.getElementById("items");
 
 const ballCountEl = document.getElementById("ball-count");
 const levelInfoEl = document.getElementById("level-info");
+const blockerEl = document.getElementById("blocker");
 const W=760;
 const H=680;
 const R=9;
@@ -26,7 +27,7 @@ const BRICK_TOP=82;
 const BRICK_LEFT=104;
 const LEVELS=[{name:"1. Co ban",kind:"basic"},
     {name:"2. Gach dem nguoc",kind:"durable"},
-
+{name:"3. Thanh chan di chuyen",kind:"blocker"}
 ];
 const LABELS= {wide:"<->",triple:"3",life:"+"}
 const ROWS=["1111111","1111111","1111111","1111111"]
@@ -38,7 +39,7 @@ const DROPS=[
 
 let level;
 let bricks=[];
-
+let blocker;
 let lives =3;
 let score=0;
 let gameTime=0;
@@ -87,6 +88,9 @@ function render(){
     paddleEl.style.top=`${PADDLE_Y}px`;
 
     paddleEl.style.width=`${paddle.w}px`;
+    blockerEl.style.left=`${blocker.x}px`;
+    blockerEl.style.top=`${blocker.y}px`;
+    blockerEl.style.width=`${blocker.w}px`;
 
     for(const ball of balls){
 
@@ -164,13 +168,16 @@ function updateBall(ball,dt){
         ball.x=R;
         ball.vx=Math.abs(ball.vx);
     }
-    if(ball.x+R>W){
-        ball.x=W-R;
-        ball.vx=-Math.abs(ball.vx);
+    if(ball.x+R > W){
+        ball.x= W-R;
+        ball.vx=  -Math.abs(ball.vx);
     }
     if(ball.y-R<0){
         ball.y=R;
         ball.vy=Math.abs(ball.vy);
+    }
+    if (level.kind ==="blocker" && circleHitsRect(ball,blocker)){
+        bounceFromRect(ball,blocker, oldX,oldY,blocker.oldX);
     }
     paddleHit(ball,oldY);
     for (let i= bricks.length-1;i>=0;i--){
@@ -222,6 +229,7 @@ function frame(now){
             paddle.w=120;
             paddle.x=clamp(paddle.x,0,W - paddle.w);
         }
+        updateBlocker(dt);
         updateItems(dt);
         for(const ball of balls) updateBall(ball,dt);
         for(let  i = balls.length -1; i>= 0; i--){
@@ -336,10 +344,10 @@ function updateItems(dt){
     }
 }
 
-function bounceFromRect(ball, rect,oldX, oldY){
-    const fromLeft = oldX+R <=rect.x;
-    const fromRight = oldX- R>= rect.x+rect.w;
-    const fromTop =oldY+R<= rect.y;
+function bounceFromRect(ball, rect,oldX, oldY, oldRectX= rect.x){
+    const fromLeft = oldX+R <=oldRectX;
+    const fromRight = oldX- R  >= oldRectX+rect.w;
+    const fromTop =oldY+R  <= rect.y;
 
     if(fromLeft){
         ball.x=rect.x-R;
@@ -371,6 +379,9 @@ function startLevel(index){
     items=[];
     itemsEl.replaceChildren();
     paddle = {x:(W-120)/2, w:120};
+    blocker ={x:300,oldX:300, y:365, w:160, h:14, vx:165};
+    blockerEl.style.display="none";
+    if (level.kind==="blocker") blockerEl.style.display="block";
     makeBricks();
     resetBall();
     render();
@@ -395,6 +406,18 @@ function updateHud(){
     levelInfoEl.textContent="";
 
     if(wideUntil > gameTime) levelInfoEl.textContent=" Thanh rong";
+}
+function updateBlocker(dt){
+if(level.kind !== "blocker") return;
+blocker.oldX=blocker.x;
+blocker.x+= blocker.vx* dt;
+if (blocker.x <0){
+    blocker.x=0;
+    blocker.vx =Math.abs(blocker.vx);
+} else if (blocker.x + blocker.w >W){
+    blocker.x= W - blocker.w;
+    blocker.vx= -Math.abs(blocker.vx);
+}
 }
 
 function paintBrick(brick){
