@@ -29,6 +29,7 @@ const LEVELS=[{name:"1. Co ban",kind:"basic"},
     {name:"2. Gach dem nguoc",kind:"durable"},
 {name:"3. Thanh chan di chuyen",kind:"blocker"},
     {name:"4. Bong tang toc", kind:"speed"},
+    {name:"5.Gach theo thu tu",kind:"ordered"},
 ];
 const LABELS= {wide:"<->",triple:"3",life:"+"}
 const ROWS=["1111111","1111111","1111111","1111111"]
@@ -43,6 +44,7 @@ let bricks=[];
 let blocker;
 let lives =3;
 let score=0;
+let nextNumber =1;
 let gameTime=0;
 let wideUntil=0;
 let balls=[];
@@ -263,6 +265,7 @@ function frame(now){
 function makeBricks(){
     bricksEl.replaceChildren();
     bricks=[];
+    let number=1;
     for (let row=0; row < ROWS.length;row++){
         for(let col=0;col< ROWS[row].length;col++){
             if (ROWS[row][col] === ".") continue;
@@ -277,7 +280,7 @@ function makeBricks(){
             const brick={
                 x:BRICK_LEFT+col*(BRICK_W+BRICK_GAP),
                 y:BRICK_TOP+row*(BRICK_H+BRICK_GAP),
-                w:BRICK_W,h:BRICK_H, el,hp, drop
+                w:BRICK_W,h:BRICK_H, el,hp, drop,number
             };
             el.style.left=`${brick.x}px`
 
@@ -287,12 +290,16 @@ function makeBricks(){
             paintBrick(brick);
             bricksEl.append(el);
             bricks.push(brick);
+            number+=1;
         }
     }
 }
 
 
 function damageBrick(brick){
+    if (level.kind==="ordered" && brick.number !== nextNumber){
+return;
+    }
     brick.hp-=1;
     if (brick.hp>0){
         paintBrick(brick);
@@ -302,6 +309,9 @@ function damageBrick(brick){
     bricks.splice(bricks.indexOf(brick),1);
     spawnItem(brick);
     score+=10;
+    if (level.kind === "ordered"){
+        nextNumber+=1;
+    }
     if (level.kind ==="speed"){
         const oldSpeed = speed;
         speed+=5;
@@ -381,6 +391,7 @@ function bounceFromRect(ball, rect,oldX, oldY, oldRectX= rect.x){
 
 function startLevel(index){
     level=LEVELS[index];
+    nextNumber=1;
     lives=3;
     score=0;
 
@@ -418,6 +429,14 @@ function updateHud(){
 
     if(wideUntil > gameTime) levelInfoEl.textContent=" Thanh rong";
     if (level.kind === "speed") levelInfoEl.textContent=`Toc do: ${speed}`;
+
+    if (level.kind==="ordered"){
+        levelInfoEl.textContent="Da pha het gach";
+
+        if (bricks.length > 0){
+            levelInfoEl.textContent=`Muc tieu: so ${nextNumber}`;
+        }
+    }
 }
 function updateBlocker(dt){
 if(level.kind !== "blocker") return;
@@ -435,6 +454,7 @@ if (blocker.x <0){
 function paintBrick(brick){
     let text ="";
     if(level.kind=== "durable") text =String(brick.hp);
+    if (level.kind === "ordered") text =String(brick.number);
     if(brick.drop) text +=" " + LABELS[brick.drop];
     brick.el.textContent=text.trim();
 
